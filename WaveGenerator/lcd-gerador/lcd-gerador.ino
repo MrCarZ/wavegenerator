@@ -4,14 +4,17 @@ LiquidCrystal lcd(2,3,4,5,6,7);
 int b1Input = 8; // Waveform Switching Button
 int b2Input = 11; // Frequency Scale Switching Button
 int freqState = 1; // Variable to Check State of the Scale
+int prevFreqState = 1; // Variable used to change LCD screen (Frequency Scale) 
 int tbj1Output = 9; // Output Signal to Activate TBJ1
 int tbj2Output = 10; // Output Signal to Activate TBJ2
 int waveState = 1; // Variable to Check state of the Wave
-int prevWaveState = 1; // Variable used to change LCD screen
+int prevWaveState = 1; // Variable used to change LCD screen (Waveform)
 int tbj3Output = 12; // Output Signal to Activate TBJ3
 int tbj4Output = 13; // Output Signal to Activate TBJ4
 int tbj5Output = 0; // Output Signal to Activate TBJ5
 int tbj6Output = 1; // Output Signal to Activate TBJ6
+int freqReader = 14; // Frequency Reader (Using A0 as digital)
+boolean waveLCD, scaleLCD; // Flags for Writing the LCD
 
 void setup() {
   pinMode(b1Input, INPUT);
@@ -22,8 +25,12 @@ void setup() {
   pinMode(tbj4Output, OUTPUT);
   pinMode(tbj5Output, OUTPUT);
   pinMode(tbj6Output, OUTPUT);
+  pinMode(freqReader, INPUT);
+  
   lcd.begin(16,2);
-  lcd.print("Waveform: Sine"); // The first Waveform is always a Sine
+  lcd.print("Type: Sine"); // The first Waveform is always a Sine
+  lcd.setCursor(0,1);
+  lcd.print("R:10-100Hz"); // The first frequency scale is always 10-100Hz
 }
 
 void loop() {
@@ -45,14 +52,14 @@ void loop() {
 //Switch to Change the Frequency Scale
 
   switch (freqState){
-    //(10-100R) Scale
+    //(10-100Hz) Scale
     case 1:
       digitalWrite(tbj3Output, LOW);
       digitalWrite(tbj4Output, LOW);
       digitalWrite(tbj5Output, LOW);
       digitalWrite(tbj6Output, LOW);
       break;
-    // (100R-1k) Scale 
+    // (100Hz-1k) Scale 
     case 2:
       digitalWrite(tbj3Output, LOW);
       digitalWrite(tbj4Output, LOW);
@@ -68,7 +75,7 @@ void loop() {
       break;
     // (10k-100k) Scale 
     case 4:
-      digitalWrite(tbj3Output, LOW);
+      digitalWrite(tbj3Output, HIGH);
       digitalWrite(tbj4Output, HIGH);
       digitalWrite(tbj5Output, HIGH);
       digitalWrite(tbj6Output, HIGH);
@@ -92,23 +99,52 @@ void loop() {
       break;
     }
 
-//Check if is necessary to change the Display Message
+//Check if is necessary to change the Display Message (WaveForm)
    if (prevWaveState != waveState){
-    switch (waveState){
-    case 1:
-      lcd.clear();
-      lcd.print("Waveform: Sine");
-      break;
-    case 2:
-      lcd.clear();
-      lcd.print("Waveform: Square");
-      break;
-    case 3:
-      lcd.clear();
-      lcd.print("Waveform: Trian");
-      break;
-    }   
+      waveLCD = true;    
    }
 
-   prevWaveState = waveState; // Store the Previous State of the Waveform to change LCD
+//Check if is necessary to change the Display Message (Frequency Range)
+   if (prevFreqState != freqState){
+      scaleLCD = true;  
+   }
+
+//Write in the LCD
+
+ if((waveLCD) || (scaleLCD)){
+     lcd.clear();
+     switch (waveState){
+      case 1:
+        lcd.print("Type:Sine");
+        break;
+      case 2:
+        lcd.print("Type:Square");
+        break;
+      case 3:
+        lcd.print("Type:Trian");
+        break;
+      }
+      switch (freqState){
+        case 1:
+          lcd.setCursor(0,1);
+          lcd.print("R:10-100Hz");
+          break;
+        case 2:
+          lcd.setCursor(0,1);
+          lcd.print("R:100-1k");
+          break;
+        case 3:
+          lcd.setCursor(0,1);
+          lcd.print("R:1-10k");
+          break;
+        case 4:
+          lcd.setCursor(0,1);
+          lcd.print("R:10-100k");
+      } 
+  }
+
+   waveLCD = false;          //
+   scaleLCD = false;         //
+   prevFreqState = freqState;// Set variables for a new loop cycle
+   prevWaveState = waveState;//  
 }
