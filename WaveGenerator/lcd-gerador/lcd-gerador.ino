@@ -27,10 +27,12 @@ void setup() {
   pinMode(tbj6Output, OUTPUT);
   pinMode(freqReader, INPUT);
   
+  digitalWrite(tbj3Output, HIGH);
+  
   lcd.begin(16,2);
   lcd.print("Type: Sine"); // The first Waveform is always a Sine
   lcd.setCursor(0,1);
-  lcd.print("R:10-100Hz"); // The first frequency scale is always 10-100Hz
+  lcd.print("R: 10-100Hz"); // The first frequency scale is always 10-100Hz
 }
 
 void loop() {
@@ -54,7 +56,7 @@ void loop() {
   switch (freqState){
     //(10-100Hz) Scale
     case 1:
-      digitalWrite(tbj3Output, LOW);
+      digitalWrite(tbj3Output, HIGH);
       digitalWrite(tbj4Output, LOW);
       digitalWrite(tbj5Output, LOW);
       digitalWrite(tbj6Output, LOW);
@@ -62,22 +64,22 @@ void loop() {
     // (100Hz-1k) Scale 
     case 2:
       digitalWrite(tbj3Output, LOW);
-      digitalWrite(tbj4Output, LOW);
+      digitalWrite(tbj4Output, HIGH);
       digitalWrite(tbj5Output, LOW);
-      digitalWrite(tbj6Output, HIGH);
+      digitalWrite(tbj6Output, LOW);
       break;
     // (1k - 10k) Scale  
     case 3:
       digitalWrite(tbj3Output, LOW);
       digitalWrite(tbj4Output, LOW);
       digitalWrite(tbj5Output, HIGH);
-      digitalWrite(tbj6Output, HIGH);
+      digitalWrite(tbj6Output, LOW);
       break;
     // (10k-100k) Scale 
     case 4:
-      digitalWrite(tbj3Output, HIGH);
-      digitalWrite(tbj4Output, HIGH);
-      digitalWrite(tbj5Output, HIGH);
+      digitalWrite(tbj3Output, LOW);
+      digitalWrite(tbj4Output, LOW);
+      digitalWrite(tbj5Output, LOW);
       digitalWrite(tbj6Output, HIGH);
       break;
       
@@ -115,31 +117,32 @@ void loop() {
      lcd.clear();
      switch (waveState){
       case 1:
-        lcd.print("Type:Sine");
+        lcd.print("Type: Sine");
         break;
       case 2:
-        lcd.print("Type:Square");
+        lcd.print("Type: Square");
         break;
       case 3:
-        lcd.print("Type:Trian");
+        lcd.print("Type: Trian");
         break;
       }
       switch (freqState){
         case 1:
           lcd.setCursor(0,1);
-          lcd.print("R:10-100Hz");
+          lcd.print("R: 10-100Hz");
           break;
+          
         case 2:
           lcd.setCursor(0,1);
-          lcd.print("R:100-1k");
+          lcd.print("R: 100-1kHz");
           break;
         case 3:
           lcd.setCursor(0,1);
-          lcd.print("R:1-10k");
+          lcd.print("R: 1-10kHz");
           break;
         case 4:
           lcd.setCursor(0,1);
-          lcd.print("R:10-100k");
+          lcd.print("R: 10-100kHz");
       } 
   }
 
