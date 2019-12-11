@@ -12,7 +12,6 @@ int prevWaveState = 1; // Variable used to change LCD screen (Waveform)
 int tbj3Output = 12; // Output Signal to Activate TBJ3
 int tbj4Output = 13; // Output Signal to Activate TBJ4
 int tbj5Output = 0; // Output Signal to Activate TBJ5
-int tbj6Output = 1; // Output Signal to Activate TBJ6
 int freqReader = 14; // Frequency Reader (Using A0 as digital)
 boolean waveLCD, scaleLCD; // Flags for Writing the LCD
 
@@ -24,7 +23,6 @@ void setup() {
   pinMode(tbj3Output, OUTPUT);
   pinMode(tbj4Output, OUTPUT);
   pinMode(tbj5Output, OUTPUT);
-  pinMode(tbj6Output, OUTPUT);
   pinMode(freqReader, INPUT);
   
   digitalWrite(tbj3Output, HIGH);
@@ -48,7 +46,7 @@ void loop() {
   if (digitalRead(b2Input) == 1){
     freqState++;
     delay(300);
-    if (freqState > 4) freqState = 1;
+    if (freqState > 3) freqState = 1;
   }
 
 //Switch to Change the Frequency Scale
@@ -59,30 +57,19 @@ void loop() {
       digitalWrite(tbj3Output, HIGH);
       digitalWrite(tbj4Output, LOW);
       digitalWrite(tbj5Output, LOW);
-      digitalWrite(tbj6Output, LOW);
       break;
     // (100Hz-1k) Scale 
     case 2:
       digitalWrite(tbj3Output, LOW);
       digitalWrite(tbj4Output, HIGH);
       digitalWrite(tbj5Output, LOW);
-      digitalWrite(tbj6Output, LOW);
       break;
     // (1k - 10k) Scale  
     case 3:
       digitalWrite(tbj3Output, LOW);
       digitalWrite(tbj4Output, LOW);
       digitalWrite(tbj5Output, HIGH);
-      digitalWrite(tbj6Output, LOW);
-      break;
-    // (10k-100k) Scale 
-    case 4:
-      digitalWrite(tbj3Output, LOW);
-      digitalWrite(tbj4Output, LOW);
-      digitalWrite(tbj5Output, LOW);
-      digitalWrite(tbj6Output, HIGH);
-      break;
-      
+      break;      
   }
 
 //Switch to Change the WaveForm
@@ -140,10 +127,7 @@ void loop() {
           lcd.setCursor(0,1);
           lcd.print("R: 1-10kHz");
           break;
-        case 4:
-          lcd.setCursor(0,1);
-          lcd.print("R: 10-100kHz");
-      } 
+      }
   }
 
    waveLCD = false;          //
